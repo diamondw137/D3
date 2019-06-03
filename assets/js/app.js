@@ -32,3 +32,67 @@ function xScale(csv_data, x_axis) {
       .range([0, width]);
   
     return xLinearScale;
+}
+// render x_axis on click 
+function renderAxes(new_scale, new_x) {
+    var bottomAxis = d3.axisBottom(new_scale);
+  
+    new_x.transition()
+      .duration(1000)
+      .call(bottomAxis);
+  
+    return new_x;
+  }
+// render circles
+function renderCircles(svg_group, new_scale, x_axis) {
+
+    svg_group.transition()
+      .duration(1000)
+      .attr("cx", d => new_scale(d[x_axis]));
+  
+    return svg_group;
+  }
+
+// new tooltip to update circles
+if (x_axis === "age") {
+    var label = "Age:";
+  }
+  else {
+    var label = "% Povetry";
+  }
+
+  var toolTip = d3.tip()
+    .attr("class", "tooltip")
+    .offset([80, -60])
+    .html(function(d) {
+      return (`${d.state}<br>${label} ${d[x_axis]}`);
+    });
+
+  circlesGroup.call(toolTip);
+
+  circlesGroup.on("mouseover", function(data) {
+    toolTip.show(data);
+  })
+    // onmouseout event
+    .on("mouseout", function(data, index) {
+      toolTip.hide(data);
+    });
+
+  return circlesGroup;
+
+// retrieve csv data
+d3.csv("data.csv", function(err, csv_data) {
+    if (err) throw err;
+
+    // parse data
+    csv_data.forEach(function(data) {
+        data.age = +data.age;
+        data.poverty = +data.poverty;
+        data.income = +data.income;
+      });
+
+    // import csv data to xlinear scale 
+    var xLinearScale = xScale(csv_data, x_axis);
+
+    // creation of y axis
+    
