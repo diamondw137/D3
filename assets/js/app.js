@@ -1,7 +1,7 @@
 var svg_Width = 960;
 var svg_Height = 500;
 
-var svg_svg_svg_margin = {
+var svg_margin = {
   top: 20,
   right: 40,
   bottom: 80,
@@ -54,6 +54,7 @@ function renderCircles(svg_group, new_scale, x_axis) {
   }
 
 // new tooltip to update circles
+function updateToolTip(x_axis, svg_group) {
 if (x_axis === "age") {
     var label = "Age:";
   }
@@ -68,9 +69,9 @@ if (x_axis === "age") {
       return (`${d.state}<br>${label} ${d[x_axis]}`);
     });
 
-  circlesGroup.call(toolTip);
+  svg_group.call(toolTip);
 
-  circlesGroup.on("mouseover", function(data) {
+  svg_group.on("mouseover", function(data) {
     toolTip.show(data);
   })
     // onmouseout event
@@ -78,7 +79,8 @@ if (x_axis === "age") {
       toolTip.hide(data);
     });
 
-  return circlesGroup;
+  return svg_group;
+}
 
 // retrieve csv data
 d3.csv("data.csv", function(err, csv_data) {
@@ -141,15 +143,65 @@ d3.csv("data.csv", function(err, csv_data) {
         .attr("value", "household") 
         .classed("inactive", true)
         .text("Household Income (Median)");
+
     // append y axis
-  chartGroup.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
-    .attr("dy", "1em")
-    .classed("axis-text", true)
-    .text("Smokes");
+    chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .classed("axis-text", true)
+        .text("Smokes");
+
+    // updateToolTip function above csv import
+    var svg_group = updateToolTip(x_axis, svg_group);
+
+    // x axis labels event listener
+  labelsGroup.selectAll("text")
+    .on("click", function() {
+      // get value of selection
+      var value = d3.select(this).attr("value");
+      if (value !== x_axis) {
+
+        // replaces chosenXAxis with value
+        x_axis = value;
+
+        // console.log(chosenXAxis)
+
+        // functions here found above csv import
+        // updates x scale for new data
+        xLinearScale = xScale(csv_data, x_axis);
+
+        // updates x axis with transition
+        xAxis = renderAxes(new_scale, new_x);
+
+        // updates circles with new x values
+        svg_group = renderCircles(svg_group, new_x, x_axis);
+
+        // updates tooltips with new info
+        svg_group = updateToolTip(x_axis, svg_group);
     
+        // changes classes to change bold text
+        if (x_axis === "age") {
+            povertyLabel
+              .classed("active", true)
+              .classed("inactive", false);
+            householdLabel
+              .classed("active", false)
+              .classed("inactive", true);
+          }
+          else {
+            povertyLabel
+              .classed("active", false)
+              .classed("inactive", true);
+            householdLabel
+              .classed("active", true)
+              .classed("inactive", false);
+          }
+        }
+    });
+});
+
 
     
     
