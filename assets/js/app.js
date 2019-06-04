@@ -95,4 +95,64 @@ d3.csv("data.csv", function(err, csv_data) {
     var xLinearScale = xScale(csv_data, x_axis);
 
     // creation of y axis
+    var yLinearScale = d3.scaleLinear()
+        .domain([0, d3.max(csv_data, d => d.healthcare)])
+        .range([height, 0]);
+
+     // Create initial axis functions
+    var bottomAxis = d3.axisBottom(xLinearScale);
+    var leftAxis = d3.axisLeft(yLinearScale);
+
+     // append x axis
+    var xAxis = svg_group.append("g")
+        .classed("x-axis", true)
+        .attr("transform", `translate(0, ${height})`)
+        .call(bottomAxis);
+
+    // append y axis
+    svg_group.append("g")
+    .call(leftAxis);
+
+    // append initial circles
+    var svg_group = svg_group.selectAll("circle")
+        .data(csv_data)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xLinearScale(d[x_axis]))
+        .attr("cy", d => yLinearScale(d.healthcare))
+        .attr("r", 20)
+        .attr("fill", "pink")
+        .attr("opacity", ".5");
     
+     // Create group for x-axis labels
+    var labelsGroup = svg_group.append("g")
+        .attr("transform", `translate(${width / 2}, ${height + 20})`);
+    
+    var povertyLabel = labelsGroup.append("text")
+        .attr("x", 0)
+        .attr("y", 20)
+        .attr("value", "povetry") 
+        .classed("active", true)
+        .text("In Povetry (%)");
+
+    var householdLabel = labelsGroup.append("text")
+        .attr("x", 0)
+        .attr("y", 40)
+        .attr("value", "household") 
+        .classed("inactive", true)
+        .text("Household Income (Median)");
+    // append y axis
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .classed("axis-text", true)
+    .text("Smokes");
+    
+
+    
+    
+    
+
+
