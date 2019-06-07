@@ -97,8 +97,8 @@ d3.csv("../assets/data/data.csv").then(function(csv_data){
 function buildCharts(csv_data) {
     csv_data.forEach(function (data) {
       data.age = +data.age;
-      data.poverty = +data.poverty;
       data.income = +data.income;
+      data.poverty = +data.poverty;
       data.healthcare = +data.healthcare;
       data.obesity = +data.obesity;
       data.smoke = +data.smoke;
@@ -163,16 +163,9 @@ function buildCharts(csv_data) {
     var ageLabel = labelsGroup.append("text")
       .attr("x", 0)
       .attr("y", 20)
-      .attr("value", "povetry")
+      .attr("value", "age")
       .classed("active", true)
       .text("Age (Median):");
-
-    var povertyLabel = labelsGroup.append("text")
-      .attr("x", 0)
-      .attr("y", 20)
-      .attr("value", "povetry")
-      .classed("active", true)
-      .text("In Povetry (%):");
 
     var householdLabel = labelsGroup.append("text")
       .attr("x", 0)
@@ -180,6 +173,13 @@ function buildCharts(csv_data) {
       .attr("value", "household")
       .classed("inactive", true)
       .text("Household Income (Median):");
+
+    var povertyLabel = labelsGroup.append("text")
+      .attr("x", 0)
+      .attr("y", 60)
+      .attr("value", "povetry")
+      .classed("inactive", true)
+      .text("In Povetry (%):");
 
     // append y axis
     svg_group.append("text")
@@ -195,9 +195,9 @@ function buildCharts(csv_data) {
       .attr("x", 0 - (height / 2))
       .attr("y", 0 - margin.left)
       .attr("dy", "1em")
-      .attr("value", "healthcare") // value to grab for event listener
+      .attr("value", "healthcare") 
       .classed("axis-text", true)
-      .text("Access to Healthcare");
+      .text("Healthcare");
 
     var obesityLabel = labelsGroup.append("text")
       .attr("transform", "rotate(-90)")
@@ -211,7 +211,7 @@ function buildCharts(csv_data) {
       .attr("transform", "rotate(-90)")
       .attr("x", 0 - (height / 2))
       .attr("y", 0 - margin.left + 40)
-      .attr("value", "smoke") // value to grab for event listener
+      .attr("value", "smoke") 
       .classed("inactive", true)
       .text("Smoke (%)");
 
@@ -248,35 +248,35 @@ function buildCharts(csv_data) {
             ageLabel
               .classed("active", true)
               .classed("inactive", false);
-            povertyLabel
-              .classed("active", true)
-              .classed("inactive", false);
             householdLabel
               .classed("active", false)
               .classed("inactive", true);
+            povertyLabel
+              .classed("active", true)
+              .classed("inactive", false);
           }
-          else if (x_axis === "income") {
+          else if (x_axis === "household") {
             ageLabel
-              .classed("active", true)
-              .classed("inactive", false);
-            povertyLabel
-              .classed("active", false)
-              .classed("inactive", true);
-            householdLabel
-              .classed("active", true)
-              .classed("inactive", false);
-          }
-        else {
-          ageLabel
             .classed("active", true)
             .classed("inactive", false);
-          povertyLabel
+          householdLabel
             .classed("active", false)
             .classed("inactive", true);
-          householdLabel
+          povertyLabel
             .classed("active", true)
             .classed("inactive", false);
         }
+        else {
+          ageLabel
+              .classed("active", true)
+              .classed("inactive", false);
+            householdLabel
+              .classed("active", false)
+              .classed("inactive", true);
+            povertyLabel
+              .classed("active", true)
+              .classed("inactive", false);
+          }
       }
   });
 }
