@@ -13,7 +13,7 @@ var height = svg_Height - svg_margin.top - svg_margin.bottom;
 
 // creation of wrapper
 var svg = d3
-  .select("body")
+  .select("#scatter")
   .append("svg")
   .attr("width", svg_Width)
   .attr("height", svg_Height);
@@ -78,11 +78,11 @@ function updateToolTip(x_axis, circlesGroup) {
 
   circlesGroup.call(toolTip);
 
-  circlesGroup.on("mouseover", function (data) {
+  circlesGroup.on("mouseover", function(data) {
     toolTip.show(data);
   })
     // onmouseout event
-    .on("mouseout", function (data, index) {
+    .on("mouseout", function(data, index) {
       toolTip.hide(data);
     });
 
@@ -95,7 +95,7 @@ d3.csv("../assets/data/data.csv").then(function(csv_data){
 });
 
 function buildCharts(csv_data) {
-    csv_data.forEach(function (data) {
+    csv_data.forEach(function(data) {
       data.age = +data.age;
       data.income = +data.income;
       data.poverty = +data.poverty;
@@ -117,7 +117,7 @@ function buildCharts(csv_data) {
     var leftAxis = d3.axisLeft(yLinearScale);
 
     //   append x axis
-    var xAxis = svg_group.append("g")
+    var new_x = svg_group.append("g")
       .classed("x-axis", true)
       .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
@@ -184,7 +184,7 @@ function buildCharts(csv_data) {
     // append y axis
     svg_group.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
+      .attr("y", 0 - svg_margin.left)
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .classed("axis-text", true)
@@ -193,7 +193,7 @@ function buildCharts(csv_data) {
     var healthcareLabel = labelsGroup.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", 0 - (height / 2))
-      .attr("y", 0 - margin.left)
+      .attr("y", 0 - svg_margin.left)
       .attr("dy", "1em")
       .attr("value", "healthcare") 
       .classed("axis-text", true)
@@ -202,7 +202,7 @@ function buildCharts(csv_data) {
     var obesityLabel = labelsGroup.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", 0 - (height / 2))
-      .attr("y", 0 - margin.left + 20)
+      .attr("y", 0 - svg_margin.left + 20)
       .attr("value", "obesity")
       .classed("inactive", true)
       .text("Obesity %");
@@ -210,7 +210,7 @@ function buildCharts(csv_data) {
     var smokeLabel = labelsGroup.append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", 0 - (height / 2))
-      .attr("y", 0 - margin.left + 40)
+      .attr("y", 0 - svg_margin.left + 40)
       .attr("value", "smoke") 
       .classed("inactive", true)
       .text("Smoke (%)");
@@ -235,7 +235,7 @@ function buildCharts(csv_data) {
           xLinearScale = xScale(csv_data, x_axis);
 
           // updates x axis with transition
-          xAxis = renderAxes(xLinearScale, xAxis);
+          new_x = renderAxes(xLinearScale, new_x);
 
           // updates circles with new x values
           circlesGroup = renderCircles(circlesGroup, xLinearScale, x_axis);
